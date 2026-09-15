@@ -1,0 +1,7 @@
+import {sqliteTable,text,integer,index,uniqueIndex} from 'drizzle-orm/sqlite-core';
+export const employees=sqliteTable('employees',{id:text('id').primaryKey(),authId:text('auth_id').unique(),email:text('email').notNull().unique(),name:text('name').notNull(),role:text('role').notNull(),active:integer('active').notNull().default(1)});
+export const records=sqliteTable('records',{id:text('id').primaryKey(),kind:text('kind').notNull(),owner:text('owner').notNull().references(()=>employees.id),parent:text('parent'),client:text('client'),phone:text('phone').unique(),email:text('email').unique(),data:text('data').notNull(),version:integer('version').notNull().default(1),token:text('token').notNull(),created:text('created').notNull()},t=>[index('idx_records_owner_kind').on(t.owner,t.kind),index('idx_records_parent').on(t.parent),index('idx_records_client').on(t.client)]);
+export const config=sqliteTable('config',{id:text('id').primaryKey(),data:text('data').notNull()});
+export const audit=sqliteTable('audit',{id:text('id').primaryKey(),record:text('record').notNull(),owner:text('owner').notNull(),actor:text('actor').notNull(),action:text('action').notNull(),details:text('details').notNull(),date:text('date').notNull()},t=>[index('idx_audit_record').on(t.record)]);
+export const documents=sqliteTable('documents',{id:text('id').primaryKey(),booking:text('booking').notNull().references(()=>records.id),name:text('name').notNull(),type:text('type').notNull(),personal:integer('personal').notNull(),size:integer('size').notNull(),created:text('created').notNull()});
+
